@@ -69,6 +69,12 @@ public class RobotContainer {
       .onTrue(new InstantCommand(() -> s_Swerve.zeroGyro())
       .alongWith(new InstantCommand(() -> s_Swerve.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0))))));
 
+      /*
+       * Note to self:
+       * Teleop Swerve is a default command, meaning anything scheduled that uses drive will take over
+       * Hence we can have a driver handoff button that will schedule a swervecontroller command to run a trajectory to drive in to the april
+       * tag or specified location based off of the april tag.  We might be doing vision without green lights!
+       */
   }
 
   /**

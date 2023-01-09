@@ -12,12 +12,13 @@ import frc.lib.util.SwerveModuleConstants;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.CANCoder;
 
 public class SwerveModule {
     public int moduleNumber;
     private double angleOffset;
-    private TalonFX mAngleMotor;
+    private TalonSRX mAngleMotor;
     private TalonFX mDriveMotor;
     private CANCoder angleEncoder;
     private double lastAngle;
@@ -33,7 +34,7 @@ public class SwerveModule {
         configAngleEncoder();
 
         /* Angle Motor Config */
-        mAngleMotor = new TalonFX(moduleConstants.angleMotorID, "DriveTrain");
+        mAngleMotor = new TalonSRX(moduleConstants.angleMotorID);
         configAngleMotor();
         
         /* Drive Motor Config */
@@ -72,7 +73,9 @@ public class SwerveModule {
 
     private void configAngleMotor(){
         mAngleMotor.configFactoryDefault();
-        mAngleMotor.configAllSettings(Robot.ctreConfigs.swerveAngleFXConfig);
+        //Things to check:  I added this line due to the fact I removed the boottozero command in CTREConfigs
+        mAngleMotor.setSelectedSensorPosition(0);
+        mAngleMotor.configAllSettings(Robot.ctreConfigs.swerveAngleSRXConfig);
         mAngleMotor.setInverted(Constants.Swerve.angleMotorInvert);
         mAngleMotor.setNeutralMode(Constants.Swerve.angleNeutralMode);
         resetToAbsolute();

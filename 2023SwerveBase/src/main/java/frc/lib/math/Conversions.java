@@ -7,6 +7,7 @@ public class Conversions {
      * @param gearRatio Gear Ratio between Falcon and Mechanism
      * @return Degrees of Rotation of Mechanism
      */
+    //Things to check:  might need to multiply by 3 here due to the new gear ratio.  We shouldnt but just in case
     public static double falconToDegrees(double counts, double gearRatio) {
         return counts * (360.0 / (gearRatio * 2048.0));
     }
@@ -16,6 +17,7 @@ public class Conversions {
      * @param gearRatio Gear Ratio between Falcon and Mechanism
      * @return Falcon Counts
      */
+    //Things to check:  might need to multiply by 3 here due to the new gear ratio.  We shouldnt but just in case
     public static double degreesToFalcon(double degrees, double gearRatio) {
         double ticks =  degrees / (360.0 / (gearRatio * 2048.0));
         return ticks;

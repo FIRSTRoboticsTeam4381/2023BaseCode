@@ -40,7 +40,7 @@ public class RobotContainer {
   private final Swerve s_Swerve = new Swerve();
 
   /* Autonomouses */
-  private final TemplateAuto templateAuto = new TemplateAuto(s_Swerve);
+  private final TestAuto testAuto = new TestAuto(s_Swerve);
 
   SendableChooser<Command> m_AutoChooser = new SendableChooser<>();
 
@@ -49,7 +49,7 @@ public class RobotContainer {
     boolean openLoop = true;
     s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, controller, translationAxis, strafeAxis, rotationAxis, openLoop));
 
-    m_AutoChooser.setDefaultOption("Template Auto", templateAuto);
+    m_AutoChooser.setDefaultOption("Test Auto", testAuto);
 
     SmartDashboard.putData(m_AutoChooser);
     // Configure the button bindings
@@ -66,10 +66,10 @@ public class RobotContainer {
     
     //Button to reset swerve odometry and angle
     zeroSwerve
-      .onTrue(new InstantCommand(() -> s_Swerve.zeroGyro())
+      .onTrue(new InstantCommand(() -> s_Swerve.zeroGyro(0))
       .alongWith(new InstantCommand(() -> s_Swerve.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0))))));
 
-      /*
+      /**
        * Note to self:
        * Teleop Swerve is a default command, meaning anything scheduled that uses drive will take over
        * Hence we can have a driver handoff button that will schedule a swervecontroller command to run a trajectory to drive in to the april

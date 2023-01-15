@@ -34,7 +34,13 @@ public class TeleopSwerve extends CommandBase {
     private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(limit);
     
     /**
-     * Driver control
+     * Driver Control command
+     * @param s_Swerve Swerve subsystem
+     * @param controller PS4 controller
+     * @param translationAxis Axis number for forward-backward control
+     * @param strafeAxis Axis number for strafe Control
+     * @param rotationAxis Axis number for turning control
+     * @param openLoop True
      */
     public TeleopSwerve(Swerve s_Swerve, CommandPS4Controller controller, int translationAxis, int strafeAxis, int rotationAxis, boolean openLoop) {
         this.s_Swerve = s_Swerve;

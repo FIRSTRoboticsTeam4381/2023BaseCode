@@ -26,7 +26,7 @@ public class Swerve extends SubsystemBase {
     public Swerve() {
         gyro = new PigeonIMU(Constants.Swerve.pigeonID);
         gyro.setYaw(0);
-        zeroGyro();
+        zeroGyro(0);
         
         mSwerveMods = new SwerveModule[] {
             new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -38,6 +38,13 @@ public class Swerve extends SubsystemBase {
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getPositions());
     }
 
+    /**
+     * Function used to actually drive the robot
+     * @param translation XY drive values
+     * @param rotation Rotation value
+     * @param fieldRelative True -> fieldOriented
+     * @param isOpenLoop True
+     */
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
 
         SwerveModuleState[] swerveModuleStates =
@@ -69,10 +76,17 @@ public class Swerve extends SubsystemBase {
         }
     }    
 
+    /**
+     * @return XY of robot on field
+     */
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
     }
 
+    /**
+     * Use to reset odometry to a certain known pose or to zero
+     * @param pose Desired new pose
+     */
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(getYaw(), getPositions(), pose);
     }
@@ -93,7 +107,11 @@ public class Swerve extends SubsystemBase {
         return positions;
     }
 
-    public void zeroGyro(){
+    /**
+     * Use to reset angle to certain known angle or to zero
+     * @param angle Desired new angle
+     */
+    public void zeroGyro(int angle){
         gyro.setYaw(0);
     }
 

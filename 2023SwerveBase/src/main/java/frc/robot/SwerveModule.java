@@ -40,6 +40,7 @@ public class SwerveModule {
         /* Drive Motor Config */
         mDriveMotor = new TalonFX(moduleConstants.driveMotorID, "DriveTrain");
         configDriveMotor();
+        
 
         lastAngle = getState().angle.getDegrees();
     }

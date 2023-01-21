@@ -41,15 +41,17 @@ public class RobotContainer {
 
   /* Autonomouses */
   private final TestAuto testAuto = new TestAuto(s_Swerve);
+  private final TemplateAuto templateAuto = new TemplateAuto(s_Swerve);
 
   SendableChooser<Command> m_AutoChooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     boolean openLoop = true;
-    s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, controller, translationAxis, strafeAxis, rotationAxis, openLoop));
+    s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, controller, openLoop));
 
     m_AutoChooser.setDefaultOption("Test Auto", testAuto);
+    m_AutoChooser.addOption("Template Auto", templateAuto);
 
     SmartDashboard.putData(m_AutoChooser);
     // Configure the button bindings

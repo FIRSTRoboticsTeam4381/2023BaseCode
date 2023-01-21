@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 public class TemplateAuto extends SequentialCommandGroup {
 
-    private String trajectoryJSON1 = "paths/output/templatePath.wpilib.json";
+    private String trajectoryJSON1 = "paths/output/test1.wpilib.json";
     private Trajectory testTrajectory1 = new Trajectory();
 
     public TemplateAuto(Swerve s_Swerve) {

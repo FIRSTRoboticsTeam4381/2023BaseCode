@@ -17,8 +17,7 @@ public class TestAuto extends SequentialCommandGroup{
         SwerveAuto drive = new SwerveAuto(autoName, s_Swerve);
 
         addCommands(
-            drive.driveLeg(1),
-            drive.driveLeg(2)
+            drive.driveLeg(1)
         );
 
     }

@@ -21,9 +21,6 @@ public class TeleopSwerve extends CommandBase {
     
     private Swerve s_Swerve;
     private CommandPS4Controller controller;
-    private int translationAxis;
-    private int strafeAxis;
-    private int rotationAxis;
 
     private final Field2d m_field = new Field2d();
     private Pose2d startPose = new Pose2d(Units.inchesToMeters(177), Units.inchesToMeters(214), Rotation2d.fromDegrees(0));
@@ -37,19 +34,13 @@ public class TeleopSwerve extends CommandBase {
      * Driver Control command
      * @param s_Swerve Swerve subsystem
      * @param controller PS4 controller
-     * @param translationAxis Axis number for forward-backward control
-     * @param strafeAxis Axis number for strafe Control
-     * @param rotationAxis Axis number for turning control
      * @param openLoop True
      */
-    public TeleopSwerve(Swerve s_Swerve, CommandPS4Controller controller, int translationAxis, int strafeAxis, int rotationAxis, boolean openLoop) {
+    public TeleopSwerve(Swerve s_Swerve, CommandPS4Controller controller, boolean openLoop) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 
         this.controller = controller;
-        this.translationAxis = translationAxis;
-        this.strafeAxis = strafeAxis;
-        this.rotationAxis = rotationAxis;
         this.openLoop = openLoop;
 
 
@@ -59,9 +50,9 @@ public class TeleopSwerve extends CommandBase {
 
     @Override
     public void execute() {
-        double yAxis = -controller.getRawAxis(translationAxis);
-        double xAxis = -controller.getRawAxis(strafeAxis);
-        double rAxis = -controller.getRawAxis(rotationAxis);
+        double yAxis = -controller.getLeftY();
+        double xAxis = -controller.getLeftX();
+        double rAxis = -controller.getRightX();
 
         /* Deadbands */
         

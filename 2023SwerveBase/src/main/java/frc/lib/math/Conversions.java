@@ -93,4 +93,27 @@ public class Conversions {
         return counts;
     }
 
+    /**
+     * Used with 775pro motor
+     * @param counts SRX Mag Counts
+     * @param gearRatio Gear Ratio between Mag Encoder and Mechanism
+     * @return Degrees of Rotation of Mechanism
+     */
+    //Things to check:  might need to multiply by 3 here due to the new gear ratio.  We shouldnt but just in case
+    public static double MagToDegrees(double counts, double gearRatio) {
+        return counts * (360.0 / (gearRatio * 4096.0));
+    }
+
+    /**
+     * Used with 775pro motor
+     * @param degrees Degrees of rotation of Mechanism
+     * @param gearRatio Gear Ratio between Mag Encoder and Mechanism
+     * @return SRX Mag Counts
+     */
+    //Things to check:  might need to multiply by 3 here due to the new gear ratio.  We shouldnt but just in case
+    public static double degreesToMag(double degrees, double gearRatio) {
+        double ticks =  degrees / (360.0 / (gearRatio * 4096.0));
+        return ticks;
+    }
+
 }

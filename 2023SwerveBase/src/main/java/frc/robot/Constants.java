@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.HashMap;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.math.geometry.Translation2d;

@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -66,7 +67,7 @@ public class RobotContainer {
     
     //Define event list for autonomous
     HashMap<String, Command> eventMap = new HashMap<>();
-    eventMap.put("action1", new PrintCommand("Did Action 1"));
+    eventMap.put("action1", new InstantCommand(() -> NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setInteger(3)));
 
     SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
       s_Swerve::getPose, // Pose2d supplier
@@ -87,6 +88,8 @@ public class RobotContainer {
     m_AutoChooser.addOption("PathPlanner Test", testPathPlannerAuto);
     
     SmartDashboard.putData(m_AutoChooser);
+
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setInteger(0);
   }
 
   /**

@@ -4,14 +4,6 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import com.pathplanner.lib.*;
-import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -21,10 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.util.SwerveAuto;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -43,12 +33,9 @@ public class RobotContainer {
   private final Trigger zeroSwerve = controller.options();
 
   /* Subsystems */
-  private final Swerve s_Swerve = new Swerve();
+  public static final Swerve s_Swerve = new Swerve();
 
-  /* Autonomouses */
-  private final TestAuto testAuto = new TestAuto(s_Swerve);
-  private final TemplateAuto templateAuto = new TemplateAuto(s_Swerve);
-
+  //Auto Chooser
   SendableChooser<Command> m_AutoChooser = new SendableChooser<>();
 
   //Change this and see what happens. Like auto for teleop.
@@ -57,36 +44,14 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, controller, true));
-
-    m_AutoChooser.setDefaultOption("Test Auto", testAuto);
-    m_AutoChooser.addOption("Template Auto", templateAuto);
-
     
     // Configure the button bindings
     configureButtonBindings();
     
-    //Define event list for autonomous
-    HashMap<String, Command> eventMap = new HashMap<>();
-    eventMap.put("action1", new InstantCommand(() -> NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setInteger(3)));
-
-    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-      s_Swerve::getPose, // Pose2d supplier
-      s_Swerve::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
-      Constants.Swerve.swerveKinematics, // SwerveDriveKinematics
-      new PIDConstants(5.0, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-      new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
-      s_Swerve::setModuleStates, // Module states consumer used to output to the drive subsystem
-      eventMap,
-      true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
-      s_Swerve // The drive subsystem. Used to properly set the requirements of path following commands
-    );
-
-
-    List<PathPlannerTrajectory> pathPlanTestPaths = PathPlanner.loadPathGroup("PathPlannerTest", new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
-    Command testPathPlannerAuto = autoBuilder.fullAuto(pathPlanTestPaths);
-
-    m_AutoChooser.addOption("PathPlanner Test", testPathPlannerAuto);
     
+    //Add autonoumous options to chooser
+    m_AutoChooser.setDefaultOption("None", Autos.none());
+    m_AutoChooser.addOption("PathPlanner Test", Autos.exampleAuto());
     SmartDashboard.putData(m_AutoChooser);
 
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setInteger(0);

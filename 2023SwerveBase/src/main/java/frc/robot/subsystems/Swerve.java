@@ -24,7 +24,6 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
 
-
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, "DriveMotorBus");
         gyro.setYaw(0);
@@ -124,7 +123,7 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic(){
-        swerveOdometry.update(getYaw(), getPositions());   
+        swerveOdometry.update(getYaw(), getPositions());
         SmartDashboard.putNumber("Gyro Angle", getYaw().getDegrees());
 
         for(SwerveModule mod : mSwerveMods){
@@ -137,5 +136,6 @@ public class Swerve extends SubsystemBase {
         }
 
         SmartDashboard.putString("XY Coord", "(" + Units.metersToInches(-getPose().getX()) + ", " + Units.metersToInches(-getPose().getY()) + ")");
+
     }
 }

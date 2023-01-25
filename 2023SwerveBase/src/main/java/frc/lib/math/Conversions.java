@@ -76,8 +76,7 @@ public class Conversions {
      * @return Distance in meters
      */
     public static double falconToMeters(double positioncounts, double circumference, double gearRatio){
-        double degrees = falconToDegrees(positioncounts, gearRatio);
-        double distance = degrees * circumference;
+        double distance = (positioncounts/(gearRatio*2048.0))*circumference;
         return distance;
     }
 
@@ -88,8 +87,7 @@ public class Conversions {
      * @return Falcon Position Counts
      */
     public static double metersToFalcon(double distance, double circumference, double gearRatio){
-        double degrees = distance/circumference;
-        double counts = degreesToFalcon(degrees, gearRatio);
+        double counts = (distance/circumference)*(gearRatio*2048.0);
         return counts;
     }
 

@@ -50,11 +50,12 @@ public class RobotContainer {
 
   SendableChooser<Command> m_AutoChooser = new SendableChooser<>();
 
+  //Change this and see what happens. Like auto for teleop.
+  //private boolean openLoop = true;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    //Change this and see what happens. Like auto for teleop.
-    boolean openLoop = true;
-    s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, controller, openLoop));
+    s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, controller, true));
 
     m_AutoChooser.setDefaultOption("Test Auto", testAuto);
     m_AutoChooser.addOption("Template Auto", templateAuto);
@@ -84,7 +85,7 @@ public class RobotContainer {
     Command testPathPlannerAuto = autoBuilder.fullAuto(pathPlanTestPaths);
 
     m_AutoChooser.addOption("PathPlanner Test", testPathPlannerAuto);
-
+    
     SmartDashboard.putData(m_AutoChooser);
   }
 

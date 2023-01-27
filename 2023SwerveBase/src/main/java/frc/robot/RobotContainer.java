@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -31,6 +32,9 @@ public class RobotContainer {
 
   /* Driver Buttons */
   private final Trigger zeroSwerve = controller.options();
+  private final Trigger lime = controller.circle();
+
+  private final Trigger leftDpad = controller.povLeft();
 
   /* Subsystems */
   public static final Swerve s_Swerve = new Swerve();
@@ -48,10 +52,11 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     
-    
     //Add autonoumous options to chooser
     m_AutoChooser.setDefaultOption("None", Autos.none());
+    m_AutoChooser.addOption("SingleConeAuto", Autos.singleCone());
     m_AutoChooser.addOption("PathPlanner Test", Autos.exampleAuto());
+
     SmartDashboard.putData(m_AutoChooser);
 
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setInteger(0);
@@ -70,6 +75,9 @@ public class RobotContainer {
       .onTrue(new InstantCommand(() -> s_Swerve.zeroGyro(0))
       .alongWith(new InstantCommand(() -> s_Swerve.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0))))));
 
+    leftDpad.onTrue(
+      new InstantCommand(()->CommandScheduler.getInstance().schedule(Autos.followTrajectory(Autos.tag1(s_Swerve.getPose()))))
+    );
       /**
        * Note to self:
        * Teleop Swerve is a default command, meaning anything scheduled that uses drive will take over

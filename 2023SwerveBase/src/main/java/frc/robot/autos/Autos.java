@@ -5,11 +5,20 @@ import java.util.Map;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
@@ -21,7 +30,8 @@ public final class Autos {
     private static final Map<String, Command> eventMap = new HashMap<>(Map.ofEntries(
         Map.entry("example1", Commands.print("Example 1 triggered")),
         Map.entry("example2", Commands.print("Example 2 triggered")),
-        Map.entry("example3", Commands.print("Example 3 triggered"))
+        Map.entry("example3", Commands.print("Example 3 triggered")),
+        Map.entry("lime", new InstantCommand(() -> NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3)))
     ));
 
     private static final SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
@@ -35,14 +45,43 @@ public final class Autos {
         true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
         RobotContainer.s_Swerve // The drive subsystem. Used to properly set the requirements of path following commands
     );
+
+    public static PPSwerveControllerCommand followTrajectory(PathPlannerTrajectory traj){
+        return new PPSwerveControllerCommand(
+            traj, 
+            RobotContainer.s_Swerve::getPose,
+            Constants.Swerve.swerveKinematics,
+            new PIDController(5.0, 0, 0),
+            new PIDController(5.0, 0, 0),
+            new PIDController(0.5, 0, 0),
+            RobotContainer.s_Swerve::setModuleStates,
+            true,
+            RobotContainer.s_Swerve
+        );
+    }
+
+    public static PathPlannerTrajectory tag1(Pose2d swervePose){
+        return PathPlanner.generatePath(
+            new PathConstraints(1, 0.5),
+            new PathPoint(swervePose.getTranslation(), swervePose.getRotation()),
+            new PathPoint(new Translation2d(-14.32, -4.58), Rotation2d.fromDegrees(180)),
+            new PathPoint(new Translation2d(-14.32, -0.98), Rotation2d.fromDegrees(180)),
+            new PathPoint(new Translation2d(-14.7, -0.98), Rotation2d.fromDegrees(180))
+            );
+    }
     
     /**
      * Auto to test PathPlanner
      * @return
      */
     public static Command exampleAuto(){
-        return autoBuilder.fullAuto(PathPlanner.loadPathGroup("Example Auto", 
+        return autoBuilder.fullAuto(PathPlanner.loadPathGroup("PathPlannerTest", 
             new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)));
+    }
+
+    public static Command singleCone(){
+        return autoBuilder.fullAuto(PathPlanner.loadPathGroup("SingleConeAuto",
+        new PathConstraints(3, 1)));
     }
 
     public static Command none(){

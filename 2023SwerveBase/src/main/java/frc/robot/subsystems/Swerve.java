@@ -14,7 +14,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.PIDController;
@@ -23,6 +26,7 @@ public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
+    private NetworkTable limeLight;
 
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, "DriveMotorBus");
@@ -37,6 +41,7 @@ public class Swerve extends SubsystemBase {
         };
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getPositions());
+        limeLight = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
     /**
@@ -93,6 +98,10 @@ public class Swerve extends SubsystemBase {
         swerveOdometry.resetPosition(getYaw(), getPositions(), pose);
     }
 
+    public void resetOdometry(Pose2d pose, Rotation2d yaw) {
+        swerveOdometry.resetPosition(yaw, getPositions(), pose);
+    }
+
     public SwerveModuleState[] getStates(){
         SwerveModuleState[] states = new SwerveModuleState[4];
         for(SwerveModule mod : mSwerveMods){
@@ -109,16 +118,36 @@ public class Swerve extends SubsystemBase {
         return positions;
     }
 
+    public Pose2d limePose(){
+        double[] defaultPose = {0, 0, 0, 0, 99};
+        Pose2d limePose2d;
+        if(limeLight.getEntry("tid").getInteger(-1) > -1){
+            double[] limeArray = limeLight.getEntry("botpose").getDoubleArray(defaultPose);
+            limePose2d = new Pose2d(limeArray[0]+8.27, limeArray[1]+4.01, Rotation2d.fromDegrees(limeArray[5]));
+        }else{
+            limePose2d = new Pose2d(0,0,getYaw());
+        }
+        return limePose2d;
+    }
+
     /**
      * Use to reset angle to certain known angle or to zero
      * @param angle Desired new angle
      */
-    public void zeroGyro(int angle){
-        gyro.setYaw(0);
+    public void zeroGyro(double angle){
+        gyro.setYaw(angle);
     }
 
     public Rotation2d getYaw() {
         return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
+    }
+    
+    
+    public void autoReset(){
+        if(limeLight.getEntry("ta").getDouble(0) > 1){
+            resetOdometry(limePose());
+            zeroGyro(limePose().getRotation().getDegrees() + ((DriverStation.getAlliance() == Alliance.Red)? 180:0));
+        }
     }
 
     @Override
@@ -135,7 +164,7 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Setpoint", mod.getDesired());
         }
 
-        SmartDashboard.putString("XY Coord", "(" + Units.metersToInches(-getPose().getX()) + ", " + Units.metersToInches(-getPose().getY()) + ")");
+        SmartDashboard.putString("XY Coord", "(" + -getPose().getX() + ", " + -getPose().getY() + ")");
 
     }
 }

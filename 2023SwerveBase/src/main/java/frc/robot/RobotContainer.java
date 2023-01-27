@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+<<<<<<< Updated upstream
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,12 @@ import java.util.List;
 import com.pathplanner.lib.*;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
+=======
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+>>>>>>> Stashed changes
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,6 +26,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
@@ -40,6 +48,9 @@ public class RobotContainer {
 
   /* Driver Buttons */
   private final Trigger zeroSwerve = controller.options();
+  private final Trigger lime = controller.circle();
+
+  private final Trigger leftDpad = controller.povLeft();
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
@@ -86,6 +97,13 @@ public class RobotContainer {
 
     m_AutoChooser.addOption("PathPlanner Test", testPathPlannerAuto);
     
+<<<<<<< Updated upstream
+=======
+    //Add autonoumous options to chooser
+    m_AutoChooser.setDefaultOption("None", Autos.none());
+    m_AutoChooser.addOption("SingleConeAuto", Autos.singleCone());
+    m_AutoChooser.addOption("PathPlanner Test", Autos.exampleAuto());
+>>>>>>> Stashed changes
     SmartDashboard.putData(m_AutoChooser);
   }
 
@@ -102,6 +120,9 @@ public class RobotContainer {
       .onTrue(new InstantCommand(() -> s_Swerve.zeroGyro(0))
       .alongWith(new InstantCommand(() -> s_Swerve.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0))))));
 
+    leftDpad.onTrue(
+      new InstantCommand(()->CommandScheduler.getInstance().schedule(Autos.followTrajectory(Autos.tag1(s_Swerve.getPose()))))
+    );
       /**
        * Note to self:
        * Teleop Swerve is a default command, meaning anything scheduled that uses drive will take over

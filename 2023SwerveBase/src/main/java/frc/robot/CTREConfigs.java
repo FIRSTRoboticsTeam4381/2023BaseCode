@@ -2,33 +2,35 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
 
 public final class CTREConfigs {
-    public TalonSRXConfiguration swerveAngleSRXConfig;
+    public TalonFXConfiguration swerveAngleFXConfig;
     public TalonFXConfiguration swerveDriveFXConfig;
     public CANCoderConfiguration swerveCanCoderConfig;
 
 
     public CTREConfigs(){
-        swerveAngleSRXConfig = new TalonSRXConfiguration();
+        swerveAngleFXConfig = new TalonFXConfiguration();
         swerveDriveFXConfig = new TalonFXConfiguration();
         swerveCanCoderConfig = new CANCoderConfiguration();
 
         /* Swerve Angle Motor Configurations */
-        swerveAngleSRXConfig.slot0.kP = Constants.Swerve.angleKP;
-        swerveAngleSRXConfig.slot0.kI = Constants.Swerve.angleKI;
-        swerveAngleSRXConfig.slot0.kD = Constants.Swerve.angleKD;
-        swerveAngleSRXConfig.slot0.kF = Constants.Swerve.angleKF;
-        swerveAngleSRXConfig.peakCurrentLimit = Constants.Swerve.anglePeakCurrentLimit;
-        swerveAngleSRXConfig.peakCurrentDuration = Constants.Swerve.anglePeakCurrentDuration;
-        swerveAngleSRXConfig.continuousCurrentLimit = Constants.Swerve.angleContinuousCurrentLimit;
-        //Things to check:  Lost this functionality moving to TalonSRX, hopefully not an issue
-        //swerveAngleFXConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
+        SupplyCurrentLimitConfiguration angleSupplyLimit = new SupplyCurrentLimitConfiguration(
+            Constants.Swerve.angleEnableCurrentLimit, 
+            Constants.Swerve.angleContinuousCurrentLimit, 
+            Constants.Swerve.anglePeakCurrentLimit, 
+            Constants.Swerve.anglePeakCurrentDuration);
+
+        swerveAngleFXConfig.slot0.kP = Constants.Swerve.angleKP;
+        swerveAngleFXConfig.slot0.kI = Constants.Swerve.angleKI;
+        swerveAngleFXConfig.slot0.kD = Constants.Swerve.angleKD;
+        swerveAngleFXConfig.slot0.kF = Constants.Swerve.angleKF;
+        swerveAngleFXConfig.supplyCurrLimit = angleSupplyLimit;
+        swerveAngleFXConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
 
 
         /* Swerve Drive Motor Configuration */

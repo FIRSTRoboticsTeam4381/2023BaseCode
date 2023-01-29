@@ -6,16 +6,17 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTableInstance;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -32,18 +33,12 @@ public class RobotContainer {
 
   /* Driver Buttons */
   private final Trigger zeroSwerve = controller.options();
-  private final Trigger lime = controller.circle();
-
-  private final Trigger leftDpad = controller.povLeft();
-
+  
   /* Subsystems */
   public static final Swerve s_Swerve = new Swerve();
 
   //Auto Chooser
   SendableChooser<Command> m_AutoChooser = new SendableChooser<>();
-
-  //Change this and see what happens. Like auto for teleop.
-  //private boolean openLoop = true;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -54,12 +49,9 @@ public class RobotContainer {
     
     //Add autonoumous options to chooser
     m_AutoChooser.setDefaultOption("None", Autos.none());
-    m_AutoChooser.addOption("SingleConeAuto", Autos.singleCone());
-    m_AutoChooser.addOption("PathPlanner Test", Autos.exampleAuto());
+    m_AutoChooser.addOption("PathPlanner Example", Autos.exampleAuto());
 
     SmartDashboard.putData(m_AutoChooser);
-
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setInteger(0);
   }
 
   /**
@@ -74,16 +66,6 @@ public class RobotContainer {
     zeroSwerve
       .onTrue(new InstantCommand(() -> s_Swerve.zeroGyro(0))
       .alongWith(new InstantCommand(() -> s_Swerve.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0))))));
-
-    leftDpad.onTrue(
-      new InstantCommand(()->CommandScheduler.getInstance().schedule(Autos.followTrajectory(Autos.tag1(s_Swerve.getPose()))))
-    );
-      /**
-       * Note to self:
-       * Teleop Swerve is a default command, meaning anything scheduled that uses drive will take over
-       * Hence we can have a driver handoff button that will schedule a swervecontroller command to run a trajectory to drive in to the april
-       * tag or specified location based off of the april tag.  We might be doing vision without green lights!
-       */
   }
 
   /**

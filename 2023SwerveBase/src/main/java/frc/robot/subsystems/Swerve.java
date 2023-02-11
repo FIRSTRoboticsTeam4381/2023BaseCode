@@ -24,7 +24,7 @@ public class Swerve extends SubsystemBase {
     public Pigeon2 gyro;
 
     public Swerve() {
-        gyro = new Pigeon2(Constants.Swerve.pigeonID, "DriveMotorBus");
+        gyro = new Pigeon2(Constants.Swerve.pigeonID, "DriveTrain");
         gyro.setYaw(0);
         zeroGyro(0);
         

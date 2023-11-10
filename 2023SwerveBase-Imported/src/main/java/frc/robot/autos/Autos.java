@@ -1,8 +1,5 @@
 package frc.robot.autos;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Translation2d;

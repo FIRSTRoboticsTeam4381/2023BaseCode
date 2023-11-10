@@ -28,6 +28,7 @@ public class DriftCorrection {
         
         pXY = xy;
 
+        driftCorrectionPID.close();
         return newSpeeds;
     }
 

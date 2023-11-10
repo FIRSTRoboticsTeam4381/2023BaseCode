@@ -1,48 +1,42 @@
 package frc.robot.autos;
 
+import java.util.List;
+
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.math.geometry.Translation2d;
-
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public final class Autos {
 
     // TODO register commands in subsystem constructors using NamedCommands.registerCommand(String name, Command command)
+    // TODO use AutoBuilder.buildAutoChooser()   to choose autos??
 
-    /**
-     * Swerve auto builder, use to runs path routines in autonomous
-     */
-    /*
-    private static final SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-        RobotContainer.s_Swerve::getPose, // Pose2d supplier
-        RobotContainer.s_Swerve::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
-        Constants.Swerve.swerveKinematics, // SwerveDriveKinematics
-        new PIDConstants(5.0, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-        new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
-        RobotContainer.s_Swerve::setModuleStates, // Module states consumer used to output to the drive subsystem
-        eventMap,
-        true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
-        RobotContainer.s_Swerve // The drive subsystem. Used to properly set the requirements of path following commands
-    );
-    */
-
-    /**
-     * Example PathPlanner Auto
-     * @return Autonomous command
-     */
-    /*
-    public static Command exampleAuto(){
-        return autoBuilder.fullAuto(PathPlanner.loadPathGroup("PathPlannerTest", 
-            new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)));
+    // TODO test of a full auto
+    public static Command testAuto(){
+        return new PathPlannerAuto("TestAuto");
     }
-    */
+
+    // TODO test of a single path
+    public static Command testPath(){
+        PathPlannerPath path = PathPlannerPath.fromPathFile("TestPath1");
+
+        return AutoBuilder.followPathWithEvents(path);
+    }
+
+    // TODO test of a path group
+    public static Command testPathGroup(){
+        List<PathPlannerPath> paths = PathPlannerAuto.getPathGroupFromAutoFile("TestAuto");
+        Command[] pathGroup = new Command[paths.size()];
+        for(int i = 0; i < pathGroup.length; i++){
+            pathGroup[i] = AutoBuilder.followPathWithEvents(paths.get(i));
+        }
+
+        return new SequentialCommandGroup(pathGroup);
+    }
 
     /**
      * Blank Autonomous to be used as default dashboard option

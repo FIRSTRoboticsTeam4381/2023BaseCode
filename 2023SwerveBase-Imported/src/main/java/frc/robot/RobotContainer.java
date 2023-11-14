@@ -52,6 +52,9 @@ public class RobotContainer {
     // TODO m_AutoChooser.addOption("PathPlanner Example", Autos.exampleAuto());
 
     SmartDashboard.putData(m_AutoChooser);
+
+    // Button to turn on/off sending debug data to the dashboard
+    SmartDashboard.putData("Toggle Debug Dashboards", LogOrDash.toggleDashboard());
   }
 
   /**

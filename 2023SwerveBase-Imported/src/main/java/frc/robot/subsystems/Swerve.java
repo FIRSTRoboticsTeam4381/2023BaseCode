@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import frc.robot.SwerveModule;
 import frc.lib.util.DriftCorrection;
 import frc.robot.Constants;
+import frc.robot.LogOrDash;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -15,8 +16,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -163,7 +162,9 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic(){
         swerveOdometry.update(getYaw(), getPositions());
-        SmartDashboard.putNumber("Gyro Angle", getYaw().getDegrees());
+        
+        
+        /*SmartDashboard.putNumber("Gyro Angle", getYaw().getDegrees());
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
@@ -174,7 +175,48 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Setpoint", mod.getDesired());
         }
 
-        SmartDashboard.putString("XY Coord", "(" + getPose().getX() + ", " + getPose().getY() + ")");
+        SmartDashboard.putString("XY Coord", "(" + getPose().getX() + ", " + getPose().getY() + ")");*/
+
+        LogOrDash.logNumber("Gyro Angle", getYaw().getDegrees());
+
+        SwerveModuleState[] currentStatus = new SwerveModuleState[4];
+        double[] targetSpeeds = new double[4];
+        double[] targetAngles = new double[4];
+        double[] absoluteAngles = new double[4];
+        
+        for(SwerveModule mod : mSwerveMods){
+            mod.sendTelemetry();
+            currentStatus[mod.moduleNumber] = mod.getState();
+            targetSpeeds[mod.moduleNumber] = mod.getDesiredSpeed();
+            targetAngles[mod.moduleNumber] = mod.getDesiredAngle();
+            absoluteAngles[mod.moduleNumber] = mod.getCanCoder().getDegrees() - mod.angleOffset;
+        }
+
+        // Compile swerve status for AdvantageScope
+        double[] targetStateAdv = new double[8];
+        double[] currentStateAdv = new double[8];
+        double[] absoluteStateAdv = new double[8];
+        for(int i=0; i<4;i++)
+        {
+            targetStateAdv[2*i] = targetAngles[i];
+            targetStateAdv[2*i+1] = targetSpeeds[i];
+            
+            currentStateAdv[2*i] = currentStatus[i].angle.getDegrees();
+            currentStateAdv[2*i+1] = currentStatus[i].speedMetersPerSecond;
+
+            absoluteStateAdv[2*i] = absoluteAngles[i];
+            absoluteStateAdv[2*i+1] = 8;//Arbitrary to make these easier to see
+        }
+
+        SmartDashboard.putNumberArray("swerve/status", currentStateAdv);
+        SmartDashboard.putNumberArray("swerve/target", targetStateAdv);
+        SmartDashboard.putNumberArray("swerve/absolute", absoluteStateAdv);
+
+
+        LogOrDash.logNumber("Gyro Pitch", gyro.getPitch());
+        LogOrDash.logNumber("Gyro Roll", gyro.getRoll());
+        LogOrDash.logNumber("Gyro Yaw", gyro.getYaw());
+        LogOrDash.logString("XY Coord", "(" + getPose().getX() + ", " + getPose().getY() + ")");
 
     }
 }

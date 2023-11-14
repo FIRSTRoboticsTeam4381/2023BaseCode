@@ -4,25 +4,27 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.math.Conversions;
 import frc.lib.util.CTREModuleState;
 import frc.lib.util.SwerveModuleConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 
 public class SwerveModule {
     public int moduleNumber;
-    private double angleOffset;
+    public double angleOffset;
     private TalonFX mAngleMotor;
     private TalonFX mDriveMotor;
     private CANCoder angleEncoder;
     private double lastAngle;
 
     private double desiredAngle;
+    private double lastSpeed;
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
 
@@ -98,8 +100,12 @@ public class SwerveModule {
         return (motor == 1)?mDriveMotor.getTemperature():mAngleMotor.getTemperature();
     }
 
-    public double getDesired(){
+    public double getDesiredAngle(){
         return desiredAngle;
+    }
+
+    public double getDesiredSpeed(){
+        return lastSpeed;
     }
 
     public SwerveModuleState getState(){
@@ -112,5 +118,56 @@ public class SwerveModule {
         double distance = Conversions.falconToMeters(mDriveMotor.getSelectedSensorPosition(), Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio);
         Rotation2d angle = Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), Constants.Swerve.angleGearRatio));
         return new SwerveModulePosition(distance, angle);
+    }
+
+
+    public void sendTelemetry() {
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/cancoder", getCanCoder().getDegrees());
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/angle/integratedposition", getState().angle.getDegrees());
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/drive/velocity", getState().speedMetersPerSecond);    
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/drive/temperature", getTemp(1));
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/angle/temperature", getTemp(2));
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/angle/setpoint", desiredAngle);
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/drive/setpoint", lastSpeed);
+        
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/angle/statorcurrent", mAngleMotor.getStatorCurrent());
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/angle/supplycurrent", mAngleMotor.getSupplyCurrent());
+
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/drive/statorcurrent", mDriveMotor.getStatorCurrent());
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/drive/supplycurrent", mDriveMotor.getSupplyCurrent());
+
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/drive/outputvoltage", mDriveMotor.getMotorOutputVoltage());
+        LogOrDash.logNumber("swerve/m" + moduleNumber + "/angle/outputvoltage", mAngleMotor.getMotorOutputVoltage());
+    
+        // Check for faults
+        Faults f = new Faults();
+        mDriveMotor.getFaults(f);
+
+        if(f.hasAnyFault())
+        {
+            LogOrDash.logString("swerve/m" + moduleNumber + "/drive/faults", f.toString());
+        }
+
+        mAngleMotor.getFaults(f);
+        if(f.hasAnyFault())
+        {
+            LogOrDash.logString("swerve/m" + moduleNumber + "/angle/faults", f.toString());
+        }
+
+        // Check for reboots
+        if(mDriveMotor.hasResetOccurred())
+        {
+            DriverStation.reportError("ALERT: Drive Motor "+moduleNumber+" has crashed!", false);
+        }
+
+        if(mAngleMotor.hasResetOccurred())
+        {
+            DriverStation.reportError("ALERT: Angle Motor "+moduleNumber+" has crashed!", false);
+        }
+
+        if(angleEncoder.hasResetOccurred())
+        {
+            DriverStation.reportError("ALERT: CANCoder "+moduleNumber+" has crashed!", false);
+        }
     }
 }

@@ -219,4 +219,12 @@ public class Swerve extends SubsystemBase {
         LogOrDash.logString("XY Coord", "(" + getPose().getX() + ", " + getPose().getY() + ")");
 
     }
+
+    public void resetWheelAngles()
+    {
+        for(SwerveModule mod : mSwerveMods)
+        {
+            mod.resetToAbsolute();
+        }
+    }
 }

@@ -68,7 +68,9 @@ public class SwerveModule {
 
     public void resetToAbsolute(){
         double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset, Constants.Swerve.angleGearRatio);
-        mAngleMotor.setSelectedSensorPosition((int)absolutePosition);
+        DriverStation.reportError("Module "+moduleNumber+" init error? "+mAngleMotor.setSelectedSensorPosition((int)absolutePosition).toString(), false);
+        DriverStation.reportError("Module "+moduleNumber+" angle initialized to "+absolutePosition, false);
+        DriverStation.reportError("Module "+moduleNumber+" read angle is "+getCanCoder().getDegrees(), false);
     }
 
     private void configAngleEncoder(){        
@@ -81,7 +83,7 @@ public class SwerveModule {
         mAngleMotor.configAllSettings(Robot.ctreConfigs.swerveAngleFXConfig);
         mAngleMotor.setInverted(Constants.Swerve.angleMotorInvert);
         mAngleMotor.setNeutralMode(Constants.Swerve.angleNeutralMode);
-        resetToAbsolute();
+        //resetToAbsolute();
     }
 
     private void configDriveMotor(){        

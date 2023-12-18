@@ -1,9 +1,9 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -14,6 +14,8 @@ import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
     public static final double stickDeadband = 0.1;
+
+    public static final int NEO_TICKS_PER_REV = 0;// TODO 
 
     public static final class Swerve {
         public static final int pigeonID = 1;
@@ -79,8 +81,8 @@ public final class Constants {
         public static final double maxAngularVelocity = 11.5;
 
         /* Neutral Modes */
-        public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
-        public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
+        public static final IdleMode angleNeutralMode = IdleMode.kCoast;
+        public static final IdleMode driveNeutralMode = IdleMode.kBrake;
         
         // TODO check - teleop
         /* Motor Inverts */

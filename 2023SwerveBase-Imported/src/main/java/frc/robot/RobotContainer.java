@@ -56,6 +56,8 @@ public class RobotContainer {
 
     // Button to turn on/off sending debug data to the dashboard
     SmartDashboard.putData("Toggle Debug Dashboards", LogOrDash.toggleDashboard());
+
+    SmartDashboard.putData("Burn Spark Settings", s_Swerve.configToFlash());
   }
 
   /**
@@ -71,7 +73,6 @@ public class RobotContainer {
       .onTrue(new InstantCommand(() -> s_Swerve.zeroGyro(0))
       .alongWith(new InstantCommand(() -> s_Swerve.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0))))));
   
-    controller.share().onTrue(new InstantCommand(() -> s_Swerve.resetWheelAngles()));
   }
 
   /**

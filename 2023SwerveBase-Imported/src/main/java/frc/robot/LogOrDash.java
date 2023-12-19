@@ -181,7 +181,7 @@ public class LogOrDash {
 
         // Walk down the binary string, removing bits and adding to error string as we find them
         // TODO Skip one bit for negative numbers (unused) or get unsigned short instead?
-        for(int i=15; i > 0; i++)
+        for(int i=15; i > 0; i--)
         {
             int x = (int) Math.pow(2, i);
             if(faultBits >= x)

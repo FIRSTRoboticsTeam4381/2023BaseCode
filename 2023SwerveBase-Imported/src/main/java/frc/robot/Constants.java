@@ -15,7 +15,7 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double stickDeadband = 0.1;
 
-    public static final int NEO_TICKS_PER_REV = 0;// TODO 
+    public static final int NEO_TICKS_PER_REV = 42;// TODO 
 
     public static final class Swerve {
         public static final int pigeonID = 1;

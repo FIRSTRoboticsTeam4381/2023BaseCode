@@ -51,11 +51,11 @@ public class SwerveModule {
         //configAngleEncoder();
 
         /* Angle Motor Config */
-        mAngleMotor = new CANSparkMax(moduleConstants.angleMotorID, MotorType.kBrushed);
+        mAngleMotor = new CANSparkMax(moduleConstants.angleMotorID, MotorType.kBrushless);
         //configAngleMotor();
         
         /* Drive Motor Config */
-        mDriveMotor = new CANSparkMax(moduleConstants.driveMotorID, MotorType.kBrushed);
+        mDriveMotor = new CANSparkMax(moduleConstants.driveMotorID, MotorType.kBrushless);
         //configDriveMotor();
         
         analogSensor = mAngleMotor.getAnalog(Mode.kAbsolute);
@@ -119,7 +119,7 @@ public class SwerveModule {
             LogOrDash.checkRevError("drive motor "+moduleNumber+" clear",
                 mDriveMotor.restoreFactoryDefaults());
             
-            mDriveMotor.wait(1000);
+            Thread.sleep(1000);
 
             SparkMaxPIDController pid = mDriveMotor.getPIDController();
 
@@ -147,10 +147,10 @@ public class SwerveModule {
             // This doesn't return a RevLibError apparently
             mDriveMotor.setInverted(Constants.Swerve.driveMotorInvert);
 
-            mDriveMotor.wait(1000);
+            Thread.sleep(1000);
             LogOrDash.checkRevError("drive motor "+moduleNumber+" BURN",
                 mDriveMotor.burnFlash());
-            mDriveMotor.wait(1000);
+            Thread.sleep(1000);
 
 
 
@@ -159,7 +159,7 @@ public class SwerveModule {
             LogOrDash.checkRevError("angle motor "+moduleNumber+" clear",
                 mAngleMotor.restoreFactoryDefaults());
             
-            mAngleMotor.wait(1000);
+            Thread.sleep(1000);
 
             pid = mAngleMotor.getPIDController();
 
@@ -181,10 +181,10 @@ public class SwerveModule {
             // This doesn't return a RevLibError apparently
             mAngleMotor.setInverted(Constants.Swerve.angleMotorInvert);
 
-            mAngleMotor.wait(1000);
+            Thread.sleep(1000);
             LogOrDash.checkRevError("angle motor "+moduleNumber+" BURN",
                 mAngleMotor.burnFlash());
-            mAngleMotor.wait(1000);
+            Thread.sleep(1000);
 
         }
         catch(InterruptedException e)

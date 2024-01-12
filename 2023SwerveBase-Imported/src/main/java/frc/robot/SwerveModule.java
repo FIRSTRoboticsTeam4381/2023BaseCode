@@ -16,13 +16,13 @@ import frc.lib.util.SwerveModuleConstants;
 //import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAnalogSensor;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkAnalogSensor;
+import com.revrobotics.SparkPIDController;
 //import com.revrobotics.SparkMaxRelativeEncoder;
-import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAnalogSensor.Mode;
-import com.revrobotics.SparkMaxRelativeEncoder.Type;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkAnalogSensor.Mode;
+import com.revrobotics.SparkRelativeEncoder.Type;
 
 public class SwerveModule {
     public int moduleNumber;
@@ -30,7 +30,7 @@ public class SwerveModule {
     private CANSparkMax mAngleMotor;
     private CANSparkMax mDriveMotor;
 
-    private SparkMaxAnalogSensor analogSensor;
+    private SparkAnalogSensor analogSensor;
 
     private RelativeEncoder distanceEncoder;
 
@@ -61,9 +61,13 @@ public class SwerveModule {
         analogSensor = mAngleMotor.getAnalog(Mode.kAbsolute);
         // Set to degrees
         // TODO if default is 1V/rev, might need to include sensor's voltage range in this
-        analogSensor.setPositionConversionFactor(360);
+        analogSensor.setPositionConversionFactor(360.0/3.3);
+        analogSensor.setInverted(true);
 
         mAngleMotor.getPIDController().setFeedbackDevice(analogSensor);
+        mAngleMotor.getPIDController().setPositionPIDWrappingMinInput(-180);
+        mAngleMotor.getPIDController().setPositionPIDWrappingMinInput(180);
+        mAngleMotor.getPIDController().setPositionPIDWrappingEnabled(true);
 
 
         distanceEncoder = mDriveMotor.getEncoder(Type.kHallSensor, Constants.NEO_TICKS_PER_REV);
@@ -121,7 +125,7 @@ public class SwerveModule {
             
             Thread.sleep(1000);
 
-            SparkMaxPIDController pid = mDriveMotor.getPIDController();
+            SparkPIDController pid = mDriveMotor.getPIDController();
 
             LogOrDash.checkRevError("drive motor "+moduleNumber+" kp",
                 pid.setP(Constants.Swerve.driveKP));
@@ -233,6 +237,8 @@ public class SwerveModule {
         
         LogOrDash.sparkMaxDiagnostics("swerve/m" + moduleNumber + "/angle", mAngleMotor);
         LogOrDash.sparkMaxDiagnostics("swerve/m" + moduleNumber + "/drive", mDriveMotor);
+
+        LogOrDash.logNumber("swerve/m"+moduleNumber+"/angle/raw_analog", analogSensor.getPosition());
         
     }
 }

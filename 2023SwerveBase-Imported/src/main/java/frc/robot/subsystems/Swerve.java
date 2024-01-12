@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -50,6 +51,7 @@ public class Swerve extends SubsystemBase {
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             Constants.Swerve.holonomicConfig,
+            () -> {return DriverStation.getAlliance().get() == DriverStation.Alliance.Blue;},
             this // Reference to this subsystem to set requirements
         );
     }

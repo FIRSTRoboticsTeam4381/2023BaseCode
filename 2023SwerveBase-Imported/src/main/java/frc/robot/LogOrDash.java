@@ -8,8 +8,8 @@ import java.util.HashMap;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
-import com.revrobotics.CANSparkMax.FaultID;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkBase.FaultID;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.DataLog;
@@ -187,7 +187,15 @@ public class LogOrDash {
             if(faultBits >= x)
             {
                 faultBits -= x;
-                faults += FaultID.fromId(x).name() + ", ";
+                FaultID f = FaultID.fromId(x);
+                if(f != null)
+                {
+                    faults += f.name() + ", ";
+                }
+                else
+                {
+                    faults += ", unknown bit: "+x;
+                }
             }
         }
 

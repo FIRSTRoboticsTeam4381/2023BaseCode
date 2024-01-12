@@ -16,21 +16,21 @@ import frc.lib.util.SwerveModuleConstants;
 //import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkAnalogSensor;
 import com.revrobotics.SparkPIDController;
 //import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkAnalogSensor.Mode;
 import com.revrobotics.SparkRelativeEncoder.Type;
 
 public class SwerveModule {
     public int moduleNumber;
-    public double angleOffset;
+    //public double angleOffset;
     private CANSparkMax mAngleMotor;
     private CANSparkMax mDriveMotor;
 
-    private SparkAnalogSensor analogSensor;
+    private SparkAbsoluteEncoder absoluteEncoder;
 
     private RelativeEncoder distanceEncoder;
 
@@ -44,7 +44,7 @@ public class SwerveModule {
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
-        angleOffset = moduleConstants.angleOffset;
+        //angleOffset = moduleConstants.angleOffset;
         
         /* Angle Encoder Config */
         //angleEncoder = new CANCoder(moduleConstants.cancoderID, "DriveTrain");
@@ -58,13 +58,11 @@ public class SwerveModule {
         mDriveMotor = new CANSparkMax(moduleConstants.driveMotorID, MotorType.kBrushless);
         //configDriveMotor();
         
-        analogSensor = mAngleMotor.getAnalog(Mode.kAbsolute);
-        // Set to degrees
-        // TODO if default is 1V/rev, might need to include sensor's voltage range in this
-        analogSensor.setPositionConversionFactor(360.0/3.3);
-        analogSensor.setInverted(true);
+        absoluteEncoder = mAngleMotor.getAbsoluteEncoder(com.revrobotics.SparkAbsoluteEncoder.Type.kDutyCycle);
+        absoluteEncoder.setPositionConversionFactor(360.0);
+        absoluteEncoder.setZeroOffset(-180);
 
-        mAngleMotor.getPIDController().setFeedbackDevice(analogSensor);
+        mAngleMotor.getPIDController().setFeedbackDevice(absoluteEncoder);
         mAngleMotor.getPIDController().setPositionPIDWrappingMinInput(-180);
         mAngleMotor.getPIDController().setPositionPIDWrappingMinInput(180);
         mAngleMotor.getPIDController().setPositionPIDWrappingEnabled(true);
@@ -198,7 +196,7 @@ public class SwerveModule {
     }
 
     public Rotation2d getAngle(){
-        return Rotation2d.fromDegrees(analogSensor.getPosition());
+        return Rotation2d.fromDegrees(absoluteEncoder.getPosition());
     }
 
     public Double getTemp(int motor){
@@ -238,7 +236,7 @@ public class SwerveModule {
         LogOrDash.sparkMaxDiagnostics("swerve/m" + moduleNumber + "/angle", mAngleMotor);
         LogOrDash.sparkMaxDiagnostics("swerve/m" + moduleNumber + "/drive", mDriveMotor);
 
-        LogOrDash.logNumber("swerve/m"+moduleNumber+"/angle/raw_analog", analogSensor.getPosition());
+        LogOrDash.logNumber("swerve/m"+moduleNumber+"/angle/raw_analog", absoluteEncoder.getPosition());
         
     }
 }

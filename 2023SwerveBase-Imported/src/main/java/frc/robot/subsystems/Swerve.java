@@ -195,7 +195,7 @@ public class Swerve extends SubsystemBase {
             currentStatus[mod.moduleNumber] = mod.getState();
             targetSpeeds[mod.moduleNumber] = mod.getDesiredSpeed();
             targetAngles[mod.moduleNumber] = mod.getDesiredAngle();
-            absoluteAngles[mod.moduleNumber] = mod.getAngle().getDegrees() - mod.angleOffset;
+            absoluteAngles[mod.moduleNumber] = mod.getAngle().getDegrees();
         }
 
         // Compile swerve status for AdvantageScope

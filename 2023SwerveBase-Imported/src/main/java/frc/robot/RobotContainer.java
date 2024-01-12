@@ -70,7 +70,7 @@ public class RobotContainer {
     
     //Button to reset swerve odometry and angle
     zeroSwerve
-      .onTrue(new InstantCommand(() -> s_Swerve.zeroGyro())
+      .onTrue(new InstantCommand(() -> s_Swerve.zeroGyro(0))
       .alongWith(new InstantCommand(() -> s_Swerve.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0))))));
   
   }

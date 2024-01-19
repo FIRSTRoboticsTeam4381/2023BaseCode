@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -65,8 +66,8 @@ public class SwerveModule {
         analogSensor.setInverted(true);
 
         mAngleMotor.getPIDController().setFeedbackDevice(analogSensor);
-        mAngleMotor.getPIDController().setPositionPIDWrappingMinInput(-180);
-        mAngleMotor.getPIDController().setPositionPIDWrappingMinInput(180);
+        mAngleMotor.getPIDController().setPositionPIDWrappingMinInput(0);
+                mAngleMotor.getPIDController().setPositionPIDWrappingMaxInput(360);
         mAngleMotor.getPIDController().setPositionPIDWrappingEnabled(true);
 
 
@@ -79,8 +80,8 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
-        desiredState = CTREModuleState.optimize(desiredState, getState().angle); //Custom optimize command, since default WPILib optimize assumes continuous controller which CTRE is not
-
+        desiredState = SwerveModuleState.optimize(desiredState, getState().angle); //Custom optimize command, since default WPILib optimize assumes continuous controller which CTRE is not
+        
         if(isOpenLoop){
             double percentOutput = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
            // mDriveMotor.set(ControlMode.PercentOutput, percentOutput);
@@ -94,7 +95,7 @@ public class SwerveModule {
 
         double angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.Swerve.maxSpeed * 0.01)) ? lastAngle : desiredState.angle.getDegrees(); //Prevent rotating module if speed is less then 1%. Prevents Jittering.
         //mAngleMotor.set(ControlMode.Position, Conversions.degreesToFalcon(angle, Constants.Swerve.angleGearRatio)); 
-        mAngleMotor.getPIDController().setReference(angle+angleOffset, ControlType.kPosition);
+        mAngleMotor.getPIDController().setReference((angle+angleOffset+180) % 360, ControlType.kPosition);
         desiredAngle = angle;
         lastAngle = angle;
     }
@@ -198,7 +199,7 @@ public class SwerveModule {
     }
 
     public Rotation2d getAngle(){
-        return Rotation2d.fromDegrees(analogSensor.getPosition() + angleOffset);
+        return Rotation2d.fromDegrees(analogSensor.getPosition() - angleOffset - 180);
     }
 
     public Double getTemp(int motor){

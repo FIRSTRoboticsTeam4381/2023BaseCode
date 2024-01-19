@@ -98,7 +98,7 @@ public final class Constants {
             public static final int driveMotorID = 52;
             public static final int angleMotorID = 51;
             public static final int canCoderID = 12;
-            public static final double angleOffset = -139;
+            public static final double angleOffset = -142.4+90+360;
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -108,7 +108,7 @@ public final class Constants {
             public static final int driveMotorID = 54;
             public static final int angleMotorID = 53;
             public static final int canCoderID = 22;
-            public static final double angleOffset = -217;
+            public static final double angleOffset = -138.7+360;
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -118,7 +118,7 @@ public final class Constants {
             public static final int driveMotorID = 58;
             public static final int angleMotorID = 57;
             public static final int canCoderID = 32;
-            public static final double angleOffset = -273;
+            public static final double angleOffset = -85.3+360;
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -128,7 +128,7 @@ public final class Constants {
             public static final int driveMotorID = 56;
             public static final int angleMotorID = 55;
             public static final int canCoderID = 42;
-            public static final double angleOffset = -239;
+            public static final double angleOffset = -115.5+360;
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
